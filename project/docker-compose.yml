@@ -1,0 +1,38 @@
+version: "3"
+services:
+  go-app:
+    container_name: "go-app"
+    image: go-app
+    ports:
+      - "8000:8000"
+    networks:
+      - mynet1
+      - mynet2 
+    depends_on:
+      - db
+  db:
+    container_name: db
+    image: mysql:latest
+    ports:
+      - "3307:3306"
+    networks:
+      - mynet2
+    env_file:
+      - db.env
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - "443:443"
+    networks:
+      - mynet2
+    volumes:
+      - ./conf:/etc/nginx/conf.d
+      - ./nginx-certs:/etc/nginx/certs
+    depends_on:
+      - go-app
+
+ 
+networks:
+  mynet1:
+  mynet2:
